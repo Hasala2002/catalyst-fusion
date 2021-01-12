@@ -1,5 +1,5 @@
 const socket = io('/')
-
+let userName;
 const videoGrid = document.getElementById('video-grid')
 const myVideo = document.createElement('video')
 myVideo.muted = true;
@@ -26,12 +26,13 @@ navigator.mediaDevices.getUserMedia({
 });
   socket.on('user-connected',(userId)=>{
     connectToNewUser(userId,stream)
+    userName = userId
 })
 })
 
 
 socket.on('createMessage',message=>{
-  $('ul').append(`<li class="message"><b>user</b><br/>${message}</li>`)
+  $('ul').append(`<li class="message"><b>${userName} says:</b><br/>${message}</li>`)
   scrollToBottom()
 })
 
@@ -94,7 +95,7 @@ const playStop = () => {
 
 const setMuteButton = () => {
   const html = `
-    <i class="fas fa-microphone"></i>
+    <i class="fas fa-microphone-alt"></i>
     <span>Mute</span>
   `
   document.querySelector('.main__mute__button').innerHTML = html;
@@ -102,7 +103,7 @@ const setMuteButton = () => {
 
 const setUnmuteButton = () => {
   const html = `
-    <i class="unmute fas fa-microphone-slash"></i>
+    <i class="unmute fas fa-microphone-alt-slash"></i>
     <span>Unmute</span>
   `
   document.querySelector('.main__mute__button').innerHTML = html;
@@ -119,7 +120,36 @@ const setStopVideo = () => {
 const setPlayVideo = () => {
   const html = `
   <i class="stop fas fa-video-slash"></i>
-    <span>Play Video</span>
+    <span>Start Video</span>
   `
   document.querySelector('.main__video__button').innerHTML = html;
+}
+document.querySelector('.main__right').style.display = 'none'
+const showHideChat = () =>{
+  let enabled = document.querySelector('.main__right').style.display
+  if(enabled!=='none'){
+    hideChat()
+  }else{
+    showChat()
+  }
+}
+
+const hideChat = () => {
+  const html = `
+    <i class="fas fa-comment-slash"></i>
+    <span>Open Chat</span>
+  `
+  document.querySelector('.main__chat__button').innerHTML=html
+  document.querySelector('.main__right').style.display = 'none';
+  document.querySelector('.main__left').style.flex = '1';
+}
+
+const showChat = () => {
+  const html = `
+    <i class="fas fa-comment"></i>
+    <span>Close Chat</span>
+  `
+  document.querySelector('.main__chat__button').innerHTML=html
+  document.querySelector('.main__right').style.display = 'flex';
+  document.querySelector('.main__left').style.flex = '0.8';
 }

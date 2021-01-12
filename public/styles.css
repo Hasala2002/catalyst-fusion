@@ -1,8 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
 
 *{
     box-sizing: border-box;
     font-family: 'Lato', sans-serif;
+    /* background-color: #161819; */
 }
 
 html,body{
@@ -10,9 +12,11 @@ html,body{
     height: 100%;
     padding: 0;
     margin: 0;
+     background-color: #161819;
 }
 
 #video-grid{
+    padding: 10px;
     display: grid;
     width: 100%;
     height: 100%;
@@ -35,28 +39,48 @@ video{
 }
 
 .main__left{
-    flex: 0.8;
+    flex: 1;
     display: flex;
     flex-direction: column;
+    transition: 0.5s;
 }
 
 .main__right{
     flex: 0.2;
-    display: flex;
+    display: none;
     flex-direction: column;
-    background-color: #242324;
+    background-color: #212327;
 }
 
 .main__video{
     flex-grow: 1;
-    background: #000;
+    background: #111;
     display: flex;
     justify-content: center;
     align-items: center;
+    position: relative;
+}
+
+.water-mark{
+    width: 200px;
+    height: 50px;
+    background-color:#00b074;
+    color: #fff;
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    font-family: 'Fredoka One', cursive;
+    border-radius: 10px;
+    display: flex;
+    opacity: 0.1;
+    z-index: 99;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.6em;
 }
 
 .main__controls{
-    background-color: #1C1E20;
+    background-color: #161819;
     display: flex;
     justify-content: space-between;
 }
@@ -73,10 +97,11 @@ video{
     min-width: 80px;
     cursor: pointer;
     border-radius: 5px;
+    margin: 5px 7.5px;
 }
 
 .main__controls__button:hover{
-  background-color: #303133;
+  background-color: #00b074;
 }
 
 span{
@@ -137,6 +162,10 @@ span{
     color: #F5F5F5;
 }
 
+#chat_message:focus{
+  outline: none;
+  word-wrap: break-word;
+}
 
 .unmute,.stop{
     color: #e02016;
