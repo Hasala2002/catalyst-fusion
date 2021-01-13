@@ -1,19 +1,10 @@
-var screen = window.matchMedia("(max-width: 600px)")
-let phone = false
-let chatSize='-20%'
-const setScreenSize = () =>{
-  if(screen.matches){
-    phone = true
-    chatSize='-80%'
-  }
-  else{
-    phone=false
-    chatSize='-80%'
-  }
-  }
-screen.addListener(setScreenSize())
-const socket = io('/')
+// backend | socket functions
+
 let userName;
+
+
+
+const socket = io('/')
 const videoGrid = document.getElementById('video-grid')
 const myVideo = document.createElement('video')
 myVideo.muted = true;
@@ -25,6 +16,7 @@ var peer = new Peer(undefined, {
 })
 
 let myVideoStream
+const userHasSubmittedInfo = (username) =>{
 navigator.mediaDevices.getUserMedia({
     video:true,
     audio:true
@@ -38,16 +30,20 @@ navigator.mediaDevices.getUserMedia({
      addVideoStream(video, userVideoStream)
     })
 });
-  socket.on('user-connected',(userId)=>{
+  socket.on('user-connected',(userId,username)=>{
+    userName = username
     connectToNewUser(userId,stream)
-    myFunction(userId)
-    userName = userId
+    userJoinedMessage(username)
 })
 })
+}
 
-
-socket.on('createMessage',message=>{
+socket.on('createMessage',(message,username)=>{
+  if(username==userName){
+    $('ul').append(`<li class="message"><b>You said:</b><br/>${message}</li>`)
+  }else{
   $('ul').append(`<li class="message"><b>${userName} says:</b><br/>${message}</li>`)
+  }
   scrollToBottom()
 })
 
@@ -55,14 +51,20 @@ peer.on('open',id=>{
     socket.emit('join-room',ROOM_ID, id)
 })
 
-const connectToNewUser = (userId,stream) => {
-    const call = peer.call(userId,stream)
-    const video = document.createElement('video')
-    call.on('stream',userVideoStream =>{
-        addVideoStream(video,userVideoStream)
-    })
-}
 
+
+
+// frontend functions
+
+let text = $('input')
+
+const connectToNewUser = (userId,stream) => {
+  const call = peer.call(userId,stream)
+  const video = document.createElement('video')
+  call.on('stream',userVideoStream =>{
+      addVideoStream(video,userVideoStream)
+  })
+}
 
 const addVideoStream = (video, stream) =>{
    video.srcObject = stream
@@ -72,11 +74,9 @@ const addVideoStream = (video, stream) =>{
    videoGrid.append(video)
 }
 
-let text = $('input')
-
 $('html').keydown((e)=>{
   if(e.which === 13 && text.val().length !== 0){
-    socket.emit('message',text.val())
+    socket.emit('message',text.val(),userName)
     text.val('')
   }
 })
@@ -114,6 +114,10 @@ const setMuteButton = () => {
     <span>Mute</span>
   `
   document.querySelector('.main__mute__button').innerHTML = html;
+  var x = document.getElementById("snackbar");
+  x.textContent=`Mic Unmuted`
+  x.className = "showState";
+  setTimeout(function(){ x.className = x.className.replace("showState", ""); }, 2500);
 }
 
 const setUnmuteButton = () => {
@@ -122,6 +126,10 @@ const setUnmuteButton = () => {
     <span>Unmute</span>
   `
   document.querySelector('.main__mute__button').innerHTML = html;
+  var x = document.getElementById("snackbar");
+  x.textContent=`Mic Muted`
+  x.className = "showState";
+  setTimeout(function(){ x.className = x.className.replace("showState", ""); }, 2500);
 }
 
 const setStopVideo = () => {
@@ -130,6 +138,10 @@ const setStopVideo = () => {
     <span>Stop Video</span>
   `
   document.querySelector('.main__video__button').innerHTML = html;
+  var x = document.getElementById("snackbar");
+  x.textContent=`Video Started`
+  x.className = "showState";
+  setTimeout(function(){ x.className = x.className.replace("showState", ""); }, 2500);
 }
 
 const setPlayVideo = () => {
@@ -138,8 +150,11 @@ const setPlayVideo = () => {
     <span>Start Video</span>
   `
   document.querySelector('.main__video__button').innerHTML = html;
+  var x = document.getElementById("snackbar");
+  x.textContent=`Video Stopped`
+  x.className = "showState";
+  setTimeout(function(){ x.className = x.className.replace("showState", ""); }, 2500);
 }
-document.querySelector('.main__right').style.right = chatSize
 
 const showHideChat = () =>{
   let enabled = document.querySelector('.main__right').style.right
@@ -172,7 +187,7 @@ const showChat = () => {
   }
 }
 
-function myFunction(userId) {
+function userJoinedMessage(userId) {
   var x = document.getElementById("snackbar");
   x.textContent=`${userId} just joined the meeting`
   x.className = "show";
@@ -182,3 +197,43 @@ function myFunction(userId) {
 document.getElementById('close').addEventListener('click',()=>{
   hideChat()
 })
+
+var screen = window.matchMedia("(max-width: 600px)")
+let phone = false
+let chatSize='-20%'
+const setScreenSize = () =>{
+  if(screen.matches){
+    phone = true
+    chatSize='-80%'
+  }
+  else{
+    phone=false
+    chatSize='-80%'
+  }
+  }
+screen.addListener(setScreenSize())
+
+document.querySelector('.main__right').style.right = chatSize
+
+function userNameErrorMsg(userId) {
+  var x = document.getElementById("snackbar");
+  x.textContent=`Display name can't be null`
+  x.className = "show";
+  setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
+
+
+document.getElementById('submitName').addEventListener('click',()=>{
+  let userName = document.getElementById('name')
+  if(userName.value===''|userName.value===undefined){
+    userNameErrorMsg();
+  }else{
+    userHasSubmittedInfo(userName.value)
+    closeNameWindow()
+  }
+})
+
+const closeNameWindow = () =>{
+  let window = document.getElementById('nameWindow');
+  window.style.display='none'
+}

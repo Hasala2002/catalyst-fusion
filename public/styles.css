@@ -7,6 +7,10 @@
     /* background-color: #161819; */
 }
 
+.fixed{
+    z-index: 100;
+}
+
 html,body{
     width: 100%;
     height: 100%;
@@ -57,7 +61,7 @@ video{
     height: 100%;
     flex-direction: column;
     background-color: #212327;
-    transition: 0.5s;
+    transition: 0.25s;
     z-index: 98;
 }
 
@@ -191,7 +195,7 @@ span{
     border-radius: 2px;
     padding: 16px;
     position: fixed;
-    z-index: 1;
+    z-index: 100;
     left: 50%;
     bottom: 12.5%;
     font-size: 17px;
@@ -201,6 +205,12 @@ span{
     visibility: visible;
     -webkit-animation: fadein 0.5s, fadeout 0.5s 2.5s;
     animation: fadein 0.5s, fadeout 0.5s 2.5s;
+  }
+
+  #snackbar.showState {
+    visibility: visible;
+    -webkit-animation: fadein 0.5s, fadeout 0.5s 1.5s;
+    animation: fadein 0.5s, fadeout 0.5s 1.5s;
   }
   
   @-webkit-keyframes fadein {
@@ -235,6 +245,9 @@ span{
    .main__right{
        width: 80%;
    }
+   #video-grid{
+    grid-template-columns: repeat(auto-fit, 150px);
+}
   }
 
   .close{
@@ -247,4 +260,8 @@ span{
       color: #fff;
       cursor: pointer;
       font-size: 24px;
+  }
+
+  .bg-gray-100{
+      background-color: #161819 !important;
   }
