@@ -1,3 +1,17 @@
+var screen = window.matchMedia("(max-width: 600px)")
+let phone = false
+let chatSize='-20%'
+const setScreenSize = () =>{
+  if(screen.matches){
+    phone = true
+    chatSize='-80%'
+  }
+  else{
+    phone=false
+    chatSize='-80%'
+  }
+  }
+screen.addListener(setScreenSize())
 const socket = io('/')
 let userName;
 const videoGrid = document.getElementById('video-grid')
@@ -26,6 +40,7 @@ navigator.mediaDevices.getUserMedia({
 });
   socket.on('user-connected',(userId)=>{
     connectToNewUser(userId,stream)
+    myFunction(userId)
     userName = userId
 })
 })
@@ -124,10 +139,11 @@ const setPlayVideo = () => {
   `
   document.querySelector('.main__video__button').innerHTML = html;
 }
-document.querySelector('.main__right').style.display = 'none'
+document.querySelector('.main__right').style.right = chatSize
+
 const showHideChat = () =>{
-  let enabled = document.querySelector('.main__right').style.display
-  if(enabled!=='none'){
+  let enabled = document.querySelector('.main__right').style.right
+  if(enabled!==chatSize){
     hideChat()
   }else{
     showChat()
@@ -140,8 +156,8 @@ const hideChat = () => {
     <span>Open Chat</span>
   `
   document.querySelector('.main__chat__button').innerHTML=html
-  document.querySelector('.main__right').style.display = 'none';
-  document.querySelector('.main__left').style.flex = '1';
+  document.querySelector('.main__right').style.right= chatSize;
+  document.querySelector('.main__left').style.width = '100%';
 }
 
 const showChat = () => {
@@ -150,6 +166,19 @@ const showChat = () => {
     <span>Close Chat</span>
   `
   document.querySelector('.main__chat__button').innerHTML=html
-  document.querySelector('.main__right').style.display = 'flex';
-  document.querySelector('.main__left').style.flex = '0.8';
+  document.querySelector('.main__right').style.right = '0';
+  if(!phone){
+  document.querySelector('.main__left').style.width = '80%';
+  }
 }
+
+function myFunction(userId) {
+  var x = document.getElementById("snackbar");
+  x.textContent=`${userId} just joined the meeting`
+  x.className = "show";
+  setTimeout(function(){ x.className = x.className.replace("show", ""); }, 3000);
+}
+
+document.getElementById('close').addEventListener('click',()=>{
+  hideChat()
+})
