@@ -50,7 +50,10 @@ socket.on('createMessage',(message,username)=>{
   scrollToBottom()
 })
 
-
+socket.on('user-connected',(userId,userName)=>{
+  connectToNewUser(userId,stream)
+  userJoinedMessage(userName)
+})
 
 
 
